@@ -38,7 +38,7 @@ jobs:
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
           buildMethod: UnityBuilder.Builder.Build
-      
+          buildsPath: build/${{ matrix.targetPlatform }}
       - uses: actions/upload-artifact@v2
         with:
           name: Build-${{ matrix.targetPlatform }}

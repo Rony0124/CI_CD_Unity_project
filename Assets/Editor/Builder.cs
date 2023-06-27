@@ -13,7 +13,7 @@ namespace UnityBuilder {
         
         public static void BuildPlayerHandler(BuildPlayerOptions options) {
             BuildPlayerWindow.RegisterBuildPlayerHandler(BuildPlayerHandler);
-            options.locationPathName = "build/Android";
+           // options.locationPathName = "build/Android";
             Console.WriteLine("yeah");
             BuildPlayerWindow.DefaultBuildMethods.BuildPlayer(options);
         }
