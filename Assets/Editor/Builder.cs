@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 
 namespace UnityBuilder {
@@ -17,7 +19,10 @@ namespace UnityBuilder {
             var scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(s => s.path).ToArray();
 
             string path = validatedOptions["customBuildPath"];
-
+            Boolean.TryParse(validatedOptions["devBuild"], out bool isDev);
+            string profileName = isDev ? "develop" : "product";
+            
+            BuildAddressables(profileName);
             BuildPipeline.BuildPlayer(scenes, path, BuildTarget.Android, BuildOptions.None);
         }
 
@@ -50,6 +55,27 @@ namespace UnityBuilder {
                 Console.WriteLine($"Found flag \"{flag}\" with value {displayValue}.");
                 providedArguments.Add(flag, value);
             }
+        }
+        
+        private static void BuildAddressables(string addressablesProfileName)
+        {
+            Console.WriteLine("Cleaning player content.");
+            AddressableAssetSettings.CleanPlayerContent();
+
+            AddressableAssetProfileSettings profileSettings =
+                AddressableAssetSettingsDefaultObject.Settings.profileSettings;
+            Console.WriteLine("Using active databuilder: " +
+                              AddressableAssetSettingsDefaultObject.Settings.ActivePlayerDataBuilder.Name);
+
+            Console.WriteLine("Setting profile to: " + addressablesProfileName);
+            string profileId = profileSettings.GetProfileId(addressablesProfileName);
+            AddressableAssetSettingsDefaultObject.Settings.activeProfileId = profileId;
+
+            Console.WriteLine("Starting addressables content build.");
+            // Build addressable content
+            AddressableAssetSettings.BuildPlayerContent();
+
+            Console.WriteLine("Building player content finished.");
         }
     }
 }

@@ -39,7 +39,13 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           buildMethod: UnityBuilder.Builder.Build
           buildsPath: build/${{ matrix.targetPlatform }}
+          customParameters: -devBuild ${{ github.event_name == 'push' }}
       - uses: actions/upload-artifact@v2
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
+      - name: Upload Addressable Content State data file
+        uses: actions/upload-artifact@v2
+        with:
+          name: addressables_content_state_Android
+          path: Assets/AddressableAssetsData/Android
